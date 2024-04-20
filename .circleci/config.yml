@@ -1,0 +1,51 @@
+defaults: &defaults
+  docker:
+    - image: circleci/node:16-browsers
+      environment:
+        TZ: "Europe/Paris"
+        JOBS: 1
+  working_directory: ~/spa-ondemand-poc
+
+version: 2.1 # Use version 2.1 to enable Orb usage.
+
+parameters:
+  deploy_to_prod:
+    type: boolean
+    default: false # do not update this value from here. Instead tweak from parameters using UI.
+    
+jobs:
+  checkout_code:
+    <<: *defaults
+    steps:
+      - checkout
+      - persist_to_workspace:
+          root: .
+          paths:
+            - .
+
+  deploy:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: .
+      - when:
+          condition: << pipeline.parameters.deploy_to_prod >>
+          steps:
+            - run: # when deploy_to_prod is set to false - it won't pick this - this is default behaviour.
+                name: prod deployments
+                command: echo "logic to deploy to production"
+      - unless:
+          condition: << pipeline.parameters.deploy_to_prod >>
+          steps:
+            - run: # runs when deploy_to_prod is set to true - this is custom behaviour - fron circleci UI.
+                name: non-prod deployments
+                command: echo "logic to deploy to development"
+
+
+workflows:
+  build_and_test:
+    jobs:
+      - deploy:
+          filters:
+            branches:
+              only: main
