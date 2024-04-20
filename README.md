@@ -4,7 +4,7 @@
 - Integrtae the workflow in your source code.
 - On commit to the main branch, the pipeline triggers and by default runs certain command, here placeholder kept is dev.
 
-To run certaim command on another environment, from circleci UI override the value for parameter and trigger the parameter. </br>
+To run certain command on another environment, from circleci UI override the value for parameter and trigger the parameter. </br>
 
 ![alt text](image.png)
 
